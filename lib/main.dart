@@ -1,4 +1,11 @@
+import 'package:ads/models/order.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_mapbox_navigation/flutter_mapbox_navigation.dart';
+import 'package:geolocator/geolocator.dart';
 
 void main() => runApp(MyApp());
 
@@ -44,42 +51,63 @@ class MyHomePage extends StatefulWidget {
 }
 
 
-// stores ExpansionPanel state information
-class Item {
-  Item({
-    this.expandedValue,
-    this.headerValue,
-    this.isExpanded = false,
-  });
 
-  String expandedValue;
-  String headerValue;
-  bool isExpanded;
-}
-
-List<Item> generateItems(int numberOfItems) {
-  return List.generate(numberOfItems, (int index) {
-    return Item(
-      headerValue: 'Panel $index',
-      expandedValue: 'This is item number $index',
-    );
-  });
-}
-
-// ...
-
-List<Item> _data = generateItems(8);
+List<Order> _data = generateItems(8);
 
 class _MyHomePageState extends State<MyHomePage> {
 
+String _platformVersion = 'Unknown';
+  MapboxNavigation _directions;
+  bool _arrived = false;
+  double _distanceRemaining, _durationRemaining;
+
+  Position _currentPosition;
+
   @override
-Widget build(BuildContext context) {
-  return SingleChildScrollView(
-    child: Container(
-      child: _buildPanel(),
-    ),
-  );
-}
+  void initState() {
+    super.initState();
+    initPlatformState();
+  }
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> initPlatformState() async {
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    _directions = MapboxNavigation(onRouteProgress: (arrived) async {
+      _distanceRemaining = await _directions.distanceRemaining;
+      _durationRemaining = await _directions.durationRemaining;
+
+      setState(() {
+        _arrived = arrived;
+      });
+      if (arrived)
+        {
+          await Future.delayed(Duration(seconds: 3));
+          await _directions.finishNavigation();
+        }
+    });
+
+    String platformVersion;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+  
+
+    setState(() {
+      _platformVersion = platformVersion;
+    });
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        child: _buildPanel(),
+      ),
+    );
+  }
 
 Widget _buildPanel() {
   return ExpansionPanelList(
@@ -88,11 +116,11 @@ Widget _buildPanel() {
         _data[index].isExpanded = !isExpanded;
       });
     },
-    children: _data.map<ExpansionPanel>((Item item) {
+    children: _data.map<ExpansionPanel>((Order order) {
       return ExpansionPanel(
         headerBuilder: (BuildContext context, bool isExpanded) {
           return ListTile(
-            title: Text("Mr Morgan Chorlton"),
+            title: Text(order.name),
           );
         },
         body: Container(
@@ -104,9 +132,9 @@ Widget _buildPanel() {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text("5 Lennox House"),
-                    Text("40 Henrietta Street"),
-                    Text("OL6 6HW"),
+                    Text(order.addressLine1),
+                    Text(order.addressLine2),
+                    Text(order.postCode),
                   ],
                 ),
               ),
@@ -117,7 +145,13 @@ Widget _buildPanel() {
                   children: <Widget>[
                   RaisedButton(
                     child: Icon(Icons.directions),
-                    onPressed: (){
+                    onPressed: () async {
+
+                    await _directions.startNavigation(
+                      origin: Location(name: "Current", latitude: 53.49183, longitude: -2.09196),
+                      destination: Location(name: "Name", latitude: order.lat, longitude: order.lng),
+                      mode: NavigationMode.drivingWithTraffic,
+                      simulateRoute: true, language: "English", units: VoiceUnits.metric);
 
                     },
                   ),
@@ -132,7 +166,7 @@ Widget _buildPanel() {
             ],
             )
           ),
-        isExpanded: item.isExpanded,
+        isExpanded: order.isExpanded,
       );
     }).toList(),
   );
