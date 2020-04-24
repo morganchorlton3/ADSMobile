@@ -11,7 +11,7 @@ class Order {
   });
 
   String addressLine1, addressLine2, postCode, name;
-  Long lng, lat;
+  double lng, lat;
   bool isExpanded;
 }
 

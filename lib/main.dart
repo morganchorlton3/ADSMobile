@@ -1,11 +1,7 @@
 import 'package:ads/models/order.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+//import 'package:http/http.dart' as http;
 import 'package:flutter_mapbox_navigation/flutter_mapbox_navigation.dart';
-import 'package:geolocator/geolocator.dart';
 
 void main() => runApp(MyApp());
 
@@ -27,13 +23,19 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('ADS'),
+        ),
+        body: MyHomePage(),
+      )
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key key}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -43,8 +45,6 @@ class MyHomePage extends StatefulWidget {
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
-
-  final String title;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -56,47 +56,12 @@ List<Order> _data = generateItems(8);
 
 class _MyHomePageState extends State<MyHomePage> {
 
-String _platformVersion = 'Unknown';
   MapboxNavigation _directions;
-  bool _arrived = false;
-  double _distanceRemaining, _durationRemaining;
-
-  Position _currentPosition;
+  //bool _arrived = false;
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    _directions = MapboxNavigation(onRouteProgress: (arrived) async {
-      _distanceRemaining = await _directions.distanceRemaining;
-      _durationRemaining = await _directions.durationRemaining;
-
-      setState(() {
-        _arrived = arrived;
-      });
-      if (arrived)
-        {
-          await Future.delayed(Duration(seconds: 3));
-          await _directions.finishNavigation();
-        }
-    });
-
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-  
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
   }
 
 
@@ -124,6 +89,7 @@ Widget _buildPanel() {
           );
         },
         body: Container(
+          color: Colors.red,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
