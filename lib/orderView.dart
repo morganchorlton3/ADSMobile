@@ -1,8 +1,7 @@
+import 'package:ads/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signature_pad/flutter_signature_pad.dart';
 import 'package:ads/models/order.dart';
-
-import 'main.dart';
 import 'models/order.dart';
 
 class OrderView extends StatelessWidget {
@@ -117,6 +116,7 @@ class OrderView extends StatelessWidget {
           RaisedButton(
             child: Text("Save"),
             onPressed: () {
+              incrementCounter();
                Navigator.pop(context, false);
             },             
           ),

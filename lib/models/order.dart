@@ -1,5 +1,6 @@
 class Order {
   Order({
+    this.id,
     this.addressLine1,
     this.addressLine2,
     this.postCode,
@@ -14,6 +15,7 @@ class Order {
     this.fzTray,
   });
 
+  int id;
   String addressLine1, addressLine2, postCode, name;
   double lng, lat;
   String amTray, chTray, fzTray;
@@ -21,6 +23,7 @@ class Order {
 
   factory Order.fromJson(Map<String, dynamic> json) {
     return new Order(
+      id: json['id'],
       name: json['name'],
       postCode: json['postCode'],
       addressLine1: json['addressLine1'],
@@ -38,6 +41,7 @@ class Order {
 List<Order> generateItems(int numberOfItems) {
   return List.generate(numberOfItems, (int index) {
     return Order(
+      id: index,
       addressLine1: "5 Lennox House",
       addressLine2: "40 Henrietta Street",
       postCode: "OL6 6HW",

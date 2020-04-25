@@ -36,6 +36,12 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
+int orderCounter = 0;
+
+incrementCounter(){
+  orderCounter++;
+}
+
 class _HomePageState extends State<HomePage> {
 
   MapboxNavigation _directions;
@@ -107,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                     padding: EdgeInsets.only(top: 8.0, left: 12.0, right: 12.0), 
                     child: Card(
                       child: ListTile(
-                        enabled: true,
+                        enabled: snapshot.data[index].id == orderCounter ? true : false,
                         leading: Icon(Icons.navigation),
                         title: Text(snapshot.data[index].name),
                         subtitle: Text(snapshot.data[index].postCode),
