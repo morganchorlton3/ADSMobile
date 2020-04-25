@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_signature_pad/flutter_signature_pad.dart';
+import 'package:ads/models/order.dart';
 
 class OrderView extends StatelessWidget {
+
+  final Order order;
+
+  OrderView({Key key, @required this.order}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,7 +25,7 @@ class OrderView extends StatelessWidget {
                 Tab(icon: Icon(Icons.directions_transit)),
               ],
             ),
-            title: Text('ADS Order'),
+            title: Text("Delivery"),
           ),
           body: TabBarView(
             physics: NeverScrollableScrollPhysics(),

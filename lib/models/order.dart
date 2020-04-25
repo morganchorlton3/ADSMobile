@@ -13,6 +13,18 @@ class Order {
   String addressLine1, addressLine2, postCode, name;
   double lng, lat;
   bool isExpanded;
+
+  factory Order.fromJson(Map<String, dynamic> json) {
+    return new Order(
+      name: json['name'],
+      postCode: json['postCode'],
+      addressLine1: json['addressLine1'],
+      addressLine2: json['addressLine2'],
+      lat: json['lat'],
+      lng: json['long'],
+    );
+  }
+
 }
 
 List<Order> generateItems(int numberOfItems) {
@@ -26,4 +38,6 @@ List<Order> generateItems(int numberOfItems) {
       lat: 53.49757,
     );
   });
+
+  
 }
