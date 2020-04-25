@@ -1,3 +1,4 @@
+import 'package:ads/gradientAppBar.dart';
 import 'package:ads/models/order.dart';
 import 'package:ads/orderView.dart';
 import 'package:flutter/material.dart';
@@ -16,18 +17,82 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
       home: Scaffold(
-        appBar: AppBar(
-          title: Text('ADS'),
+        body: Column(
+          children: <Widget>[
+            new GradientAppBar("ADS"),
+            Container(
+              child: HomePageBody(),
+            )
+          ],
         ),
-        body: HomePage(),
       )
     );
   }
 }
+
+
+class HomePageBody extends StatelessWidget {
+
+  MapboxNavigation _directions;
+
+ Future<List<Order>> getOrders() async {
+    var url = 'http://ads.morganchorlton.me/api/orders';
+    var response = await http.get(url);
+    
+    var notes = List<Order>();
+    
+    if (response.statusCode == 200) {
+      var notesJson = json.decode(response.body);
+      for (var noteJson in notesJson) {
+        notes.add(Order.fromJson(noteJson));
+      }
+    }
+    return notes;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new OrderRow();
+  }
+
+}
+
+class OrderRow extends StatelessWidget {
+
+final orderCard = new Container(
+    height: 124.0,
+    decoration: new BoxDecoration(
+      color: Color.fromRGBO(46, 72, 87, 1),
+      shape: BoxShape.rectangle,
+      borderRadius: new BorderRadius.circular(4.0),
+      boxShadow: <BoxShadow>[
+        new BoxShadow(  
+          color: Colors.black12,
+          blurRadius: 10.0,
+          offset: new Offset(0.0, 10.0),
+        ),
+      ],
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return new Container(
+      height: 120.0,
+      margin: const EdgeInsets.symmetric(
+        vertical: 16.0,
+        horizontal: 16.0,
+      ),
+      child: new Stack(
+        children: <Widget>[
+          orderCard,
+        ],
+      )
+    );
+  }
+}
+
 class HomePage extends StatefulWidget {
 
   @override
@@ -95,46 +160,58 @@ class _HomePageState extends State<HomePage> {
         builder: (BuildContext context, AsyncSnapshot snapshot){
           if(snapshot.data == null){
             return Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                backgroundColor: Color.fromRGBO(255, 255, 187, 1),
+                valueColor: AlwaysStoppedAnimation<Color>(Color.fromRGBO(251, 202, 0, 1)),
+
+              ),
             );
           }else{
-            return ListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  enabled: true,
-                  leading: Icon(Icons.navigation),
-                  title: Text(snapshot.data[index].postCode),
-                  onTap: ()async {
-                    Position position = await Geolocator()
-                    .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+            return Container(
+              child: ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(top: 8.0),
+                    child: Card(
+                      child: ListTile(
+                        enabled: true,
+                        leading: Icon(Icons.navigation),
+                        title: Text(snapshot.data[index].name),
+                        subtitle: Text(snapshot.data[index].postCode),
+                        onTap: ()async {
+                          Position position = await Geolocator()
+                          .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-                    final cityhall = Location(name: "Current Pos", latitude: position.latitude, longitude: position.longitude);
-                    final downtown = Location(name: "New Destination", latitude: snapshot.data[index].lat , longitude: snapshot.data[index].lng);
-                  
-                    await _directions.startNavigation(
-                      origin: cityhall, 
-                      destination: downtown, 
-                      mode: NavigationMode.drivingWithTraffic, 
-                      simulateRoute: false,
-                      language: "english"
-                    );
-                  },          
-                  trailing: Column(
-                    children: <Widget>[
-                      RaisedButton(
-                        child: Text("I'm here"),
-                        onPressed: (){
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => OrderView(order: snapshot.data[index])),
-                            );
-                        },
+                          final cityhall = Location(name: "Current Pos", latitude: position.latitude, longitude: position.longitude);
+                          final downtown = Location(name: "New Destination", latitude: snapshot.data[index].lat , longitude: snapshot.data[index].lng);
+                        
+                          await _directions.startNavigation(
+                            origin: cityhall, 
+                            destination: downtown, 
+                            mode: NavigationMode.drivingWithTraffic, 
+                            simulateRoute: false,
+                            language: "english"
+                          );
+                        },          
+                        trailing: Column(
+                          children: <Widget>[
+                            RaisedButton(
+                              child: Text("I'm here"),
+                              onPressed: (){
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => OrderView(order: snapshot.data[index])),
+                                  );
+                              },
+                              ),
+                          ],
                         ),
-                    ],
-                  ),
-                );
-              },
+                      ),
+                    ),
+                  );
+                },
+              ),
             );
           }
         },
