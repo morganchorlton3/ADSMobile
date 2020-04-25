@@ -1,4 +1,3 @@
-import 'package:ads/gradientAppBar.dart';
 import 'package:ads/models/order.dart';
 import 'package:ads/orderView.dart';
 import 'package:flutter/material.dart';
@@ -18,44 +17,18 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       home: Scaffold(
+        backgroundColor: Color.fromRGBO(51, 102, 153, 1),
         appBar: AppBar(
+          backgroundColor: Color.fromRGBO(251, 202, 0, 1),
           title: Center(
-            child: Text('ADS'),
+            child: Text('ADS', style: TextStyle(color: Color.fromRGBO(51, 102, 153, 1),),),
           ),
         ),
-        body:HomePageBody(),
+        body:HomePage(),
       ),
     );
   }
 }
-
-
-class HomePageBody extends StatelessWidget {
-
-  MapboxNavigation _directions;
-
- Future<List<Order>> getOrders() async {
-    var url = 'http://ads.morganchorlton.me/api/orders';
-    var response = await http.get(url);
-    
-    var notes = List<Order>();
-    
-    if (response.statusCode == 200) {
-      var notesJson = json.decode(response.body);
-      for (var noteJson in notesJson) {
-        notes.add(Order.fromJson(noteJson));
-      }
-    }
-    return notes;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return new HomePage();
-  }
-
-}
-
 
 class HomePage extends StatefulWidget {
 
@@ -131,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: EdgeInsets.only(top: 8.0),
+                    padding: EdgeInsets.only(top: 8.0, left: 12.0, right: 12.0), 
                     child: Card(
                       child: ListTile(
                         enabled: true,
