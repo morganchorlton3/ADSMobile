@@ -18,15 +18,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       home: Scaffold(
-        body: Column(
-          children: <Widget>[
-            new GradientAppBar("ADS"),
-            Container(
-              child: HomePageBody(),
-            )
-          ],
+        appBar: AppBar(
+          title: Center(
+            child: Text('ADS'),
+          ),
         ),
-      )
+        body:HomePageBody(),
+      ),
     );
   }
 }
@@ -53,45 +51,11 @@ class HomePageBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new OrderRow();
+    return new HomePage();
   }
 
 }
 
-class OrderRow extends StatelessWidget {
-
-final orderCard = new Container(
-    height: 124.0,
-    decoration: new BoxDecoration(
-      color: Color.fromRGBO(46, 72, 87, 1),
-      shape: BoxShape.rectangle,
-      borderRadius: new BorderRadius.circular(4.0),
-      boxShadow: <BoxShadow>[
-        new BoxShadow(  
-          color: Colors.black12,
-          blurRadius: 10.0,
-          offset: new Offset(0.0, 10.0),
-        ),
-      ],
-    ),
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    return new Container(
-      height: 120.0,
-      margin: const EdgeInsets.symmetric(
-        vertical: 16.0,
-        horizontal: 16.0,
-      ),
-      child: new Stack(
-        children: <Widget>[
-          orderCard,
-        ],
-      )
-    );
-  }
-}
 
 class HomePage extends StatefulWidget {
 
@@ -144,11 +108,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     initPlatformState();
-   /* fetchNotes().then((value) {
-      setState(() {
-        _notes.addAll(value);
-      });
-    });*/
     super.initState();
   }
 
