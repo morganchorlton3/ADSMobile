@@ -1,3 +1,4 @@
+import 'package:ads/models/compleatedOrder.dart';
 import 'package:ads/models/order.dart';
 import 'package:ads/orderView.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_mapbox_navigation/flutter_mapbox_navigation.dart';
 import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class OrdersPage extends StatefulWidget {
 
@@ -15,8 +17,15 @@ class OrdersPage extends StatefulWidget {
 int orderCounter = 0;
 int ordersCount = 0;
 
+List<CompletedOrder> compleatedOrders = new List<CompletedOrder>();
 
-incrementCounter() async{
+
+incrementCounter(Order order, String signature) async{
+  CompletedOrder completedOrder = new CompletedOrder(order.id, "Hello", 1);
+  compleatedOrders.add(completedOrder);
+  for(var i = 0; i < compleatedOrders.length; i++){
+       // print(compleatedOrders[i].toJson());
+  }
   /*final prefs = await SharedPreferences.getInstance();
   int orderCounter = prefs.get('orderCounter');
   if(orderCounter == null){
@@ -27,9 +36,7 @@ incrementCounter() async{
   prefs.setInt('orderCounter', orderCounter);
   print(orderCounter);
   */
-  orderCounter++;
-  print(orderCounter);
-  
+  orderCounter++;  
 }
 
 class _OrdersPageState extends State<OrdersPage> {
@@ -102,7 +109,7 @@ class _OrdersPageState extends State<OrdersPage> {
                             padding: EdgeInsets.only(top: 8.0, left: 12.0, right: 12.0), 
                             child: Card(
                               child: ListTile(
-                                enabled: snapshot.data[index].id == orderCounter ? true : false,
+                                enabled: snapshot.data[index].orderCounter == orderCounter ? true : false,
                                 leading: Icon(Icons.navigation),
                                 title: Text(snapshot.data[index].name),
                                 subtitle: Text(snapshot.data[index].postCode),
@@ -159,7 +166,11 @@ class _OrdersPageState extends State<OrdersPage> {
       );
   }
 
-  _endRun(){
+  _endRun() async{
     print("Run Finished");
+    var url = 'https://ads.morganchorlton.me/api/run/save';
+    print(json.encode(compleatedOrders));
+    var response = await http.post(url, body: json.encode(compleatedOrders));
+    print(response);
   }
 }

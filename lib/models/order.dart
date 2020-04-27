@@ -1,6 +1,7 @@
 class Order {
   Order({
     this.id,
+    this.orderCounter,
     this.addressLine1,
     this.addressLine2,
     this.postCode,
@@ -17,7 +18,7 @@ class Order {
     this.fzTray,
   });
 
-  int id;
+  int id, orderCounter;
   String addressLine1, addressLine2, postCode, name, phoneNumber;
   double lng, lat;
   int amTray, chTray, fzTray;
@@ -26,6 +27,7 @@ class Order {
   factory Order.fromJson(Map<String, dynamic> json) {
     return new Order(
       id: json['id'],
+      orderCounter: json['orderCounter'],
       name: json['name'],
       phoneNumber: json['phoneNumber'],
       postCode: json['postCode'],

@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_signature_pad/flutter_signature_pad.dart';
 import 'package:ads/models/order.dart';
@@ -7,7 +8,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'dart:ui' as ui;
-
 
 class OrderView extends StatelessWidget {
 
@@ -145,8 +145,7 @@ class OrderView extends StatelessWidget {
     children: <Widget>[
       Padding(
         padding: const EdgeInsets.all(8.0),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 150),
+        child: Card(
           child: Container(
             width: 100,
             color : Colors.white,
@@ -172,28 +171,20 @@ class OrderView extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              Padding(
+          Expanded(
+            child: Container(
+              child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("Customer Signature:", style: TextStyle(color: Colors.white),),
-              ),
-            ],
-          ),
-          _img.buffer.lengthInBytes == 0 ? Container() : LimitedBox(maxHeight: 200.0, child: Image.memory(_img.buffer.asUint8List())),
-          Container(
-            width: 400,
-            height: 200,
-            color: Colors.white,
-            child: Signature(
-              color: Colors.black,
-              strokeWidth: 5.0, 
-              backgroundPainter: null, 
-              key: _sign,
-              onSign: () {
+                child: Signature(
+                  color: Colors.black,
+                  key: _sign,
+                  onSign: () {
                     final sign = _sign.currentState;
-                    debugPrint('${sign.points.length} points in the signature');
-                  }, 
+                  },
+                  strokeWidth: 2,
+                ),
+              ),
+              color: Colors.black12,
             ),
           ),
           Padding(
@@ -205,15 +196,18 @@ class OrderView extends StatelessWidget {
                 child: Text("Finish Delivery", style: TextStyle(color: Color.fromRGBO(51, 102, 153, 1)),),
                 onPressed: () async{
                   final sign = _sign.currentState;
-                            //retrieve image data, do whatever you want with it (send to server, save locally...)
-                            final image = await sign.getData();
-                            var data = await image.toByteData(format: ui.ImageByteFormat.png);
-                            sign.clear();
-                            final encoded = base64.encode(data.buffer.asUint8List());
-                      
-                            _img = data;
-                  incrementCounter();
-                  print(order.id);
+
+                  //retrieve image data, do whatever you want with it (send to server, save locally...)
+                  final image = await sign.getData();
+                  var data = await image.toByteData(format: ui.ImageByteFormat.png);
+                  sign.clear();
+                  final encoded = base64.encode(data.buffer.asUint8List());
+                  
+                  _img = data;
+                  
+                  //print(encoded);
+
+                  incrementCounter(order, encoded);
                   Navigator.pop(context, false);
                 },             
               ),
