@@ -1,3 +1,4 @@
+import 'package:ads/login.dart';
 import 'package:ads/models/compleatedOrder.dart';
 import 'package:ads/models/order.dart';
 import 'package:ads/orderView.dart';
@@ -7,6 +8,7 @@ import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class OrdersPage extends StatefulWidget {
 
@@ -73,13 +75,15 @@ class _OrdersPageState extends State<OrdersPage> {
   Future<List<Order>> getOrders() async {
    SharedPreferences localStorage = await SharedPreferences.getInstance();
       var orderJson = localStorage.getString('orders'); 
-      var orders = List<Order>();
-      var ordersJson = json.decode(orderJson);
-      for (var orderJson in ordersJson) {
-        orders.add(Order.fromJson(orderJson));
+      if(orderJson != null){
+        var orders = List<Order>();
+        var ordersJson = json.decode(orderJson);
+        for (var orderJson in ordersJson) {
+          orders.add(Order.fromJson(orderJson));
+        }
+        ordersCount = orders.length;
+        return orders;
       }
-      ordersCount = orders.length;
-      return orders;
   }
 
   @override
@@ -168,9 +172,24 @@ class _OrdersPageState extends State<OrdersPage> {
 
   _endRun() async{
     print("Run Finished");
-    var url = 'https://ads.morganchorlton.me/api/run/save';
+    var url = 'https://ads.morganchorlton.me/api/run/save?id=1' ;
     print(json.encode(compleatedOrders));
     var response = await http.post(url, body: json.encode(compleatedOrders));
-    print(response);
-  }
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.clear();
+    Navigator.push(
+            context,
+            new MaterialPageRoute(
+                builder: (context) => LogIn()
+                )
+              );
+              Alert(
+      context: context,
+      type: AlertType.success,
+      title: "Trip Saved",
+      desc: "Trip Compleate",
+    ).show();
+    }
+    
+  
 }

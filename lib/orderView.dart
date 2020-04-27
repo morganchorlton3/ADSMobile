@@ -171,6 +171,10 @@ class OrderView extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(bottom:8.0),
+            child: Center(child: Text("Customer Signature", style: TextStyle(color: Colors.white, fontSize: 18)),),
+          ),
           Expanded(
             child: Container(
               child: Padding(
@@ -188,31 +192,40 @@ class OrderView extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top:24.0),
-            child: SizedBox(
-              width: double.infinity,
-              child: RaisedButton(
-                color: Color.fromRGBO(251, 202, 0, 1),
-                child: Text("Finish Delivery", style: TextStyle(color: Color.fromRGBO(51, 102, 153, 1)),),
-                onPressed: () async{
-                  final sign = _sign.currentState;
+            padding: const EdgeInsets.only(top:24.0, left: 12, right: 12),
+            child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    width: double.infinity,
+                    child: RaisedButton(
+                      color: Color.fromRGBO(251, 202, 0, 1),
+                      child: Text("Finish Delivery", style: TextStyle(color: Color.fromRGBO(51, 102, 153, 1), fontSize: 16),),
+                      onPressed: () async{
+                        final sign = _sign.currentState;
 
-                  //retrieve image data, do whatever you want with it (send to server, save locally...)
-                  final image = await sign.getData();
-                  var data = await image.toByteData(format: ui.ImageByteFormat.png);
-                  sign.clear();
-                  final encoded = base64.encode(data.buffer.asUint8List());
-                  
-                  _img = data;
-                  
-                  //print(encoded);
-
-                  incrementCounter(order, encoded);
-                  Navigator.pop(context, false);
-                },             
+                        //retrieve image data, do whatever you want with it (send to server, save locally...)
+                        final image = await sign.getData();
+                        var data = await image.toByteData(format: ui.ImageByteFormat.png);
+                        sign.clear();
+                        final encoded = base64.encode(data.buffer.asUint8List());
+                        incrementCounter(order, encoded);
+                        Navigator.pop(context, false);
+                      },             
+                    ),
+                  ),
+                    SizedBox(
+                    width: double.infinity,
+                    child:RaisedButton(
+                      color: Colors.red,
+                      child: Text("Could not Deliver", style: TextStyle(color: Colors.white, fontSize: 16),),
+                      onPressed: () async{
+                        
+                      },             
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
           ],
         ),
       ),
