@@ -18,7 +18,7 @@ class Order {
   int id;
   String addressLine1, addressLine2, postCode, name;
   double lng, lat;
-  String amTray, chTray, fzTray;
+  int amTray, chTray, fzTray;
   bool isExpanded;
 
   factory Order.fromJson(Map<String, dynamic> json) {
@@ -30,9 +30,9 @@ class Order {
       addressLine2: json['addressLine2'],
       lat: json['lat'],
       lng: json['long'],
-      amTray: "3",
-      chTray: "2",
-      fzTray: "1",
+      amTray: json['amTray'],
+      chTray: json['chTray'],
+      fzTray: json['fzTray'],
     );
   }
 
@@ -48,9 +48,9 @@ List<Order> generateItems(int numberOfItems) {
       name:"Mr Morgan Chorlcsdston",
       lng: -2.03468,
       lat: 53.49757,
-      amTray: "3",
-      chTray: "2",
-      fzTray: "1",
+      amTray: 3,
+      chTray: 2,
+      fzTray: 1,
     );
   });
 

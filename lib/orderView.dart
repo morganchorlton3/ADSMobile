@@ -1,8 +1,10 @@
-import 'package:ads/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signature_pad/flutter_signature_pad.dart';
 import 'package:ads/models/order.dart';
 import 'models/order.dart';
+import 'orders.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class OrderView extends StatelessWidget {
 
@@ -25,8 +27,8 @@ class OrderView extends StatelessWidget {
             ),
             bottom: TabBar(
               tabs: [
-                Tab(icon: Icon(Icons.directions_car, color: Color.fromRGBO(51, 102, 153, 1),)),
-                Tab(icon: Icon(Icons.directions_transit, color: Color.fromRGBO(51, 102, 153, 1),)),
+                Tab(icon: Icon(Icons.description, color: Color.fromRGBO(51, 102, 153, 1),)),
+                Tab(icon: Icon(Icons.perm_identity, color: Color.fromRGBO(51, 102, 153, 1),)),
               ],
             ),
             title: Text("Delivery", style: TextStyle(color: Color.fromRGBO(51, 102, 153, 1),),),
@@ -44,21 +46,90 @@ class OrderView extends StatelessWidget {
   }
 
   Widget currentDelivery(){
+    return Column(
+      children: <Widget>[
+        ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: double.infinity),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12.0, top: 8.0),
+                      child: Center(
+                        child: Text('Customer Details', style: TextStyle(fontSize: 20),)
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: customerDetails(),
+                    ),
+                  ],
+                ),
+              )
+            ),
+          ),
+        ), 
+        Padding(
+          padding: const EdgeInsets.only(top:8.0),
+          child: Column(
+            children: <Widget>[
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  trayCount("AM", order.amTray),
+                  trayCount("CH", order.chTray),
+                  trayCount("FZ", order.fzTray),
+                ],
+              )
+            ]
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget customerDetails(){
     return Padding(
-      padding: const EdgeInsets.only(top:8.0),
+      padding: const EdgeInsets.only(left: 8.0),
       child: Column(
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(order.name)// textLeft(order.name),
+          ),
+          
           Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              trayCount("AM", 3),
-              trayCount("CH", 1),
-              trayCount("FZ", 1),
-            ],
+              Column(children: <Widget>[
+                  textLeft(order.addressLine1),
+                  //textLeft(order.addressLine2),
+                  textLeft(order.postCode),
+                ],
+              ),
+              Column(children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.phone),
+                    onPressed: null//_callPhone("tel:+07783075935"),
+                  )
+                ],
+              ),
+            ]
           )
-        ]
+        ],
       ),
+    );
+  }
+
+  Widget textLeft(String txt){
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(txt),
     );
   }
 
@@ -117,6 +188,7 @@ class OrderView extends StatelessWidget {
             child: Text("Save"),
             onPressed: () {
               incrementCounter();
+              print(order.id);
                Navigator.pop(context, false);
             },             
           ),
@@ -124,5 +196,13 @@ class OrderView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _callPhone(String phone) async {
+    if (await canLaunch(phone)) {
+      await launch(phone);
+    } else {
+      throw 'Could not Call Phone';
+    }
   }
 }
