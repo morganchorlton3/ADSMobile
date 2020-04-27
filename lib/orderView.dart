@@ -4,11 +4,18 @@ import 'package:ads/models/order.dart';
 import 'models/order.dart';
 import 'orders.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:typed_data';
+import 'dart:convert';
+import 'dart:ui' as ui;
 
 
 class OrderView extends StatelessWidget {
 
   final Order order;
+  //Signature Image
+  ByteData _img = ByteData(0);
+  //Signature pad Date
+  final _sign = GlobalKey<SignatureState>();
 
   OrderView({Key key, @required this.order}) : super(key: key);
 
@@ -157,6 +164,7 @@ class OrderView extends StatelessWidget {
     ],
   );
   }
+  
 
   Widget finishDelivery(BuildContext context) {
     return Container(
@@ -172,6 +180,7 @@ class OrderView extends StatelessWidget {
               ),
             ],
           ),
+          _img.buffer.lengthInBytes == 0 ? Container() : LimitedBox(maxHeight: 200.0, child: Image.memory(_img.buffer.asUint8List())),
           Container(
             width: 400,
             height: 200,
@@ -180,17 +189,35 @@ class OrderView extends StatelessWidget {
               color: Colors.black,
               strokeWidth: 5.0, 
               backgroundPainter: null, 
-              onSign: null, 
-              key: null, 
+              key: _sign,
+              onSign: () {
+                    final sign = _sign.currentState;
+                    debugPrint('${sign.points.length} points in the signature');
+                  }, 
             ),
           ),
-          RaisedButton(
-            child: Text("Save"),
-            onPressed: () {
-              incrementCounter();
-              print(order.id);
-               Navigator.pop(context, false);
-            },             
+          Padding(
+            padding: const EdgeInsets.only(top:24.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: RaisedButton(
+                color: Color.fromRGBO(251, 202, 0, 1),
+                child: Text("Finish Delivery", style: TextStyle(color: Color.fromRGBO(51, 102, 153, 1)),),
+                onPressed: () async{
+                  final sign = _sign.currentState;
+                            //retrieve image data, do whatever you want with it (send to server, save locally...)
+                            final image = await sign.getData();
+                            var data = await image.toByteData(format: ui.ImageByteFormat.png);
+                            sign.clear();
+                            final encoded = base64.encode(data.buffer.asUint8List());
+                      
+                            _img = data;
+                  incrementCounter();
+                  print(order.id);
+                  Navigator.pop(context, false);
+                },             
+              ),
+            ),
           ),
           ],
         ),

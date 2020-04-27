@@ -145,8 +145,10 @@ class _OrdersPageState extends State<OrdersPage> {
               ),
             ),
             BottomAppBar(
+              color: Color.fromRGBO(251, 202, 0, 1),
               child: Center(
                 child: RaisedButton(
+                  color: Color.fromRGBO(51, 102, 153, 1),
                   onPressed: orderCounter == ordersCount ? _endRun : null, 
                   child: Text("End Run"),
                 ),
