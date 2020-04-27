@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class LogIn extends StatefulWidget {
   @override
@@ -110,6 +111,12 @@ void _login() async{
         var ordersJson = json.decode(response.body);
         if(ordersJson.toString().contains("No Trip")){
           print("No Trip Found");
+           Alert(
+            context: context,
+            type: AlertType.error,
+            title: "Trip Error",
+            desc: "No Trip Found",
+          ).show();
         }else{
           SharedPreferences localStorage = await SharedPreferences.getInstance();
           localStorage.setString('orders', json.encode(ordersJson));
