@@ -115,7 +115,7 @@ class OrderView extends StatelessWidget {
               Column(children: <Widget>[
                   IconButton(
                     icon: Icon(Icons.phone),
-                    onPressed: () { _makePhoneCall("tel://07760306029");},
+                    onPressed: () { _makePhoneCall(order.phoneNumber);},
                   )
                 ],
               ),
@@ -199,8 +199,8 @@ class OrderView extends StatelessWidget {
   }
 
   Future<void> _makePhoneCall(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
+    if (await canLaunch('tel://' + url)) {
+      await launch('tel://' + url);
     } else {
       throw 'Could not launch $url';
     }

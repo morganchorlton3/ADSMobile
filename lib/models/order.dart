@@ -4,7 +4,9 @@ class Order {
     this.addressLine1,
     this.addressLine2,
     this.postCode,
+    //User
     this.name,
+    this.phoneNumber,
     //For Directions
     this.lng,
     this.lat,
@@ -16,7 +18,7 @@ class Order {
   });
 
   int id;
-  String addressLine1, addressLine2, postCode, name;
+  String addressLine1, addressLine2, postCode, name, phoneNumber;
   double lng, lat;
   int amTray, chTray, fzTray;
   bool isExpanded;
@@ -25,6 +27,7 @@ class Order {
     return new Order(
       id: json['id'],
       name: json['name'],
+      phoneNumber: json['phoneNumber'],
       postCode: json['postCode'],
       addressLine1: json['addressLine1'],
       addressLine2: json['addressLine2'],

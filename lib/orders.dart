@@ -13,6 +13,8 @@ class OrdersPage extends StatefulWidget {
 }
 
 int orderCounter = 0;
+int ordersCount = 0;
+
 
 incrementCounter() async{
   /*final prefs = await SharedPreferences.getInstance();
@@ -69,85 +71,93 @@ class _OrdersPageState extends State<OrdersPage> {
       for (var orderJson in ordersJson) {
         orders.add(Order.fromJson(orderJson));
       }
+      ordersCount = orders.length;
       return orders;
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Color.fromRGBO(51, 102, 153, 1),
-        appBar: AppBar(
-          backgroundColor: Color.fromRGBO(251, 202, 0, 1),
-          title: Center(
-            child: Text('ADS', style: TextStyle(color: Color.fromRGBO(51, 102, 153, 1),),),
-          ),
-        ),
-        body: Container(
-        child: FutureBuilder<List<Order>>(
-          future: getOrders(),
-          builder: (BuildContext context, AsyncSnapshot snapshot){
-            if(snapshot.data == null){
-              return Center(
-                child: CircularProgressIndicator(
-                  backgroundColor: Color.fromRGBO(255, 255, 187, 1),
-                  valueColor: AlwaysStoppedAnimation<Color>(Color.fromRGBO(251, 202, 0, 1)),
+    return Scaffold(
+      backgroundColor: Color.fromRGBO(51, 102, 153, 1),
+        body: Column(
+          children: <Widget>[
+            Expanded(
+              child: FutureBuilder<List<Order>>(
+                future: getOrders(),
+                builder: (BuildContext context, AsyncSnapshot snapshot){
+                  if(snapshot.data == null){
+                    return Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: Color.fromRGBO(255, 255, 187, 1),
+                        valueColor: AlwaysStoppedAnimation<Color>(Color.fromRGBO(251, 202, 0, 1)),
 
-                ),
-              );
-            }else{
-              return Container(
-                child: ListView.builder(
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.only(top: 8.0, left: 12.0, right: 12.0), 
-                      child: Card(
-                        child: ListTile(
-                          enabled: snapshot.data[index].id == orderCounter ? true : false,
-                          leading: Icon(Icons.navigation),
-                          title: Text(snapshot.data[index].name),
-                          subtitle: Text(snapshot.data[index].postCode),
-                          onTap: ()async {
-                            Position position = await Geolocator()
-                            .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-
-                            final cityhall = Location(name: "Current Pos", latitude: position.latitude, longitude: position.longitude);
-                            final downtown = Location(name: "New Destination", latitude: snapshot.data[index].lat , longitude: snapshot.data[index].lng);
-                          
-                            await _directions.startNavigation(
-                              origin: cityhall, 
-                              destination: downtown, 
-                              mode: NavigationMode.drivingWithTraffic, 
-                              simulateRoute: false,
-                              language: "english"
-                            );
-                          },          
-                          trailing: Column(
-                            children: <Widget>[
-                              RaisedButton(
-                                child: Text("I'm here"),
-                                onPressed: (){
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => OrderView(order: snapshot.data[index])),
-                                    );
-                                },
-                                ),
-                            ],
-                          ),
-                        ),
                       ),
                     );
-                  },
+                  }else{
+                    return Container(
+                      child: ListView.builder(
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.only(top: 8.0, left: 12.0, right: 12.0), 
+                            child: Card(
+                              child: ListTile(
+                                enabled: snapshot.data[index].id == orderCounter ? true : false,
+                                leading: Icon(Icons.navigation),
+                                title: Text(snapshot.data[index].name),
+                                subtitle: Text(snapshot.data[index].postCode),
+                                onTap: ()async {
+                                  Position position = await Geolocator()
+                                  .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+                                  final cityhall = Location(name: "Current Pos", latitude: position.latitude, longitude: position.longitude);
+                                  final downtown = Location(name: "New Destination", latitude: snapshot.data[index].lat , longitude: snapshot.data[index].lng);
+                                
+                                  await _directions.startNavigation(
+                                    origin: cityhall, 
+                                    destination: downtown, 
+                                    mode: NavigationMode.drivingWithTraffic, 
+                                    simulateRoute: false,
+                                    language: "english"
+                                  );
+                                },          
+                                trailing: Column(
+                                  children: <Widget>[
+                                    RaisedButton(
+                                      child: Text("I'm here"),
+                                      onPressed: (){
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => OrderView(order: snapshot.data[index])),
+                                          );
+                                      },
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+            BottomAppBar(
+              child: Center(
+                child: RaisedButton(
+                  onPressed: orderCounter == ordersCount ? _endRun : null, 
+                  child: Text("End Run"),
                 ),
-              );
-            }
-          },
+              )
+            ),
+          ],
         ),
-      ),
-      )
-    );
+      );
+  }
+
+  _endRun(){
+    print("Run Finished");
   }
 }

@@ -20,9 +20,10 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
   void _checkIfLoggedIn() async{
-      // check if token is there
+      // check if user is logged in
       SharedPreferences localStorage = await SharedPreferences.getInstance();
-      var token = localStorage.getString('token');
+      var token = localStorage.getString('orders');
+      print(token);
       if(token!= null){
          setState(() {
             _isLoggedIn = true;
