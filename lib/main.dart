@@ -16,7 +16,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    _checkIfLoggedIn();
+    _checkIfLoggedIn(); 
     super.initState();
   }
   void _checkIfLoggedIn() async{

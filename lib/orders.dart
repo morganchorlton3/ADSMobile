@@ -23,7 +23,7 @@ List<CompletedOrder> compleatedOrders = new List<CompletedOrder>();
 
 
 incrementCounter(Order order, String signature) async{
-  CompletedOrder completedOrder = new CompletedOrder(order.id, "Hello", 1);
+  CompletedOrder completedOrder = new CompletedOrder(order.id, "Hello", 1, order.userID);
   compleatedOrders.add(completedOrder);
   for(var i = 0; i < compleatedOrders.length; i++){
        // print(compleatedOrders[i].toJson());
@@ -44,6 +44,7 @@ incrementCounter(Order order, String signature) async{
 class _OrdersPageState extends State<OrdersPage> {
 
   MapboxNavigation _directions;
+  int _run;
   //bool _arrived = false;
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -82,6 +83,7 @@ class _OrdersPageState extends State<OrdersPage> {
           orders.add(Order.fromJson(orderJson));
         }
         ordersCount = orders.length;
+        _run = orders[0].runID;
         return orders;
       }
   }
@@ -172,9 +174,10 @@ class _OrdersPageState extends State<OrdersPage> {
 
   _endRun() async{
     print("Run Finished");
-    var url = 'https://ads.morganchorlton.me/api/run/save?id=1' ;
+    var url = 'https://ads.morganchorlton.me/api/run/save?id=' + this._run.toString();
     print(json.encode(compleatedOrders));
     var response = await http.post(url, body: json.encode(compleatedOrders));
+    print(response.body);
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.clear();
     Navigator.push(
