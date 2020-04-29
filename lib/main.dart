@@ -34,15 +34,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: Color.fromRGBO(51, 102, 153, 1),
-        appBar: AppBar(
-          backgroundColor: Color.fromRGBO(251, 202, 0, 1),
-          title: Center(
-            child: Text('ADS', style: TextStyle(color: Color.fromRGBO(51, 102, 153, 1),),),
-          ),
-        ),
         body: _isLoggedIn ? OrdersPage() :  LogIn(),
       ),
       

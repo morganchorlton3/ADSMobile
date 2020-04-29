@@ -1,3 +1,4 @@
+import 'package:ads/Picking.dart';
 import 'package:ads/orders.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -208,6 +209,7 @@ void pickerLogin() async{
       var response = await http.post(url, body: body);
       if (response.statusCode == 200) {
         var pickJson = json.decode(response.body);
+        print(pickJson);
         if(pickJson.toString().contains("No Pick")){
           print("No Pick Found");
            Alert(
@@ -222,12 +224,11 @@ void pickerLogin() async{
           Navigator.push(
             context,
             new MaterialPageRoute(
-                builder: (context) => OrdersPage()
+                builder: (context) => PickingPage()
                 )
               );
             }
-          }
-
+        }
     setState(() {
        _isLoading = false;
     });
