@@ -31,7 +31,7 @@ dependencies:
   shared_preferences: ^0.4.3
   url_launcher: ^5.4.5
   rflutter_alert: ^1.0.3
-  barcode_scan: ^3.0.0
+  flutter_barcode_scanner: ^1.0.0
 
 dev_dependencies:
   flutter_test:
@@ -50,8 +50,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  assets:
-    - images/
+  #assets:
+  #  - images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
