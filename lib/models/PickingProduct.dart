@@ -4,11 +4,12 @@ import 'package:ads/services/webService.dart';
 
 class PickingProduct {
 
-  int id, productID, aisle, mod, shelf;
+  int id, orderID, productID, aisle, mod, shelf;
   String productName, slot, barcode;
 
   PickingProduct({
     this.id,
+    this.orderID,
     this.productName,
     this.barcode,
     //Product Location
@@ -21,6 +22,7 @@ class PickingProduct {
   factory PickingProduct.fromJson(Map<String, dynamic> json) {
     return PickingProduct(
       id: json['id'],
+      orderID: json['orderID'],
       productName: json['products']['name'],
       barcode: json['products']['barcode'],
       aisle: json['products']['product_location']['aisle'],
@@ -32,6 +34,7 @@ class PickingProduct {
 
   Map<String, dynamic> toJson() => {
     'id': id,
+    'orderID': orderID,
     'name': productName,
     'barcode' : barcode,
     'aisle': aisle,

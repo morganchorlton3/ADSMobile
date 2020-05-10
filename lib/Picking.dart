@@ -52,6 +52,7 @@ class _PickingPageState extends State<PickingPage> {
   void getProducts(){
     Webservice().load(PickingProduct.all).then((products) => {
       setState(() => {
+        products.sort((a, b) => a.aisle.compareTo(b.aisle)),
         _products = products,
          _progressController = false,
       }),
@@ -94,7 +95,7 @@ class _PickingPageState extends State<PickingPage> {
             )
         : Column(
           children: <Widget>[
-            Expanded(
+            Expanded( 
               child: ListView.builder(
                 itemCount: _products == null ? 0 : _products.length ,
                 itemBuilder: (context, index) {
@@ -107,7 +108,7 @@ class _PickingPageState extends State<PickingPage> {
                             children: <Widget>[
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 10),
-                                child: Center(child: Text(_products[index].productName, style: TextStyle(fontSize: 18),),),
+                                child: Center(child: Text(_products[index].barcode, style: TextStyle(fontSize: 18),),),
                               ),
                               Row(
                                  mainAxisSize: MainAxisSize.max,
@@ -116,7 +117,8 @@ class _PickingPageState extends State<PickingPage> {
                                   innerCard("Aisle", _products[index].aisle.toString()),
                                   innerCard("Mod", _products[index].mod.toString()),
                                   innerCard("Shelf", _products[index].shelf.toString()),
-                                  innerCard("Slot", _products[index].slot.toString())
+                                  innerCard("Slot", _products[index].slot.toString()),
+                                  innerCard("Tray", _products[index].orderID.toString())
 
                                 ],
                               )
