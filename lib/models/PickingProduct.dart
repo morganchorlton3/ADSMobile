@@ -4,7 +4,7 @@ import 'package:ads/services/webService.dart';
 
 class PickingProduct {
 
-  int id, orderID, productID, aisle, mod, shelf;
+  int id, orderID, productID, aisle, mod, shelf, qty;
   String productName, slot, barcode;
 
   PickingProduct({
@@ -12,6 +12,7 @@ class PickingProduct {
     this.orderID,
     this.productName,
     this.barcode,
+    this.qty,
     //Product Location
     this.aisle,
     this.mod,
@@ -29,6 +30,7 @@ class PickingProduct {
       mod: json['products']['product_location']['mod'],
       shelf: json['products']['product_location']['shelf'],
       slot: json['products']['product_location']['slot'],
+      qty: json['quantity']
     );
   }
 
@@ -40,7 +42,8 @@ class PickingProduct {
     'aisle': aisle,
     'mod': mod,
     'shelf': shelf,
-    'slot': slot
+    'slot': slot,
+    'qty': qty
   };
 
   static Resource<List<PickingProduct>> get all {

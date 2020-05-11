@@ -25,38 +25,41 @@ class _PickingPageState extends State<PickingPage> {
 
   List<PickingProduct> _products;
   bool _progressController = true;
+  List data;
 
   @override
   void initState() {
-    getProducts();
+    getData();
     super.initState();
-  }
-
-  Future<List<PickingProduct>> getPick() async {
-   SharedPreferences localStorage = await SharedPreferences.getInstance();
-      var orderJson = localStorage.getString('Pick'); 
-      if(orderJson != null){
-        var picks = List<PickingProduct>();
-        var pickJson = json.decode(orderJson);
-        for (var pickJson in pickJson) {
-          picks.add(PickingProduct.fromJson(pickJson));
-          print('---------------------------------');
-          print(PickingProduct.fromJson(pickJson).toJson());
-          print('---------------------------------');
+  } 
+  
+  Future<String> getData() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var orderJson = localStorage.getString('Pick');
+    if(orderJson != null){
+      List<PickingProduct> itemsList= List<PickingProduct>();
+      print("PICK JSON:" +orderJson);
+      var pickJson = json.decode(orderJson);
+      for (var item in pickJson) {
+        PickingProduct product = PickingProduct.fromJson(item);
+        PickingProduct existingItem = itemsList.firstWhere((itemToCheck) => itemToCheck.barcode == product.barcode && itemToCheck.orderID == product.orderID, orElse: () => null);
+        if(existingItem != null){
+          print("DUPLICATE");
+          print(existingItem.productName);
+          existingItem.qty = existingItem.qty +1;
+          itemsList.remove(existingItem);
+          itemsList.add(existingItem);
+        }else{
+          itemsList.add(product);
         }
-        ordersCount = picks.length;
-        return picks;
       }
-  }
-
-  void getProducts(){
-    Webservice().load(PickingProduct.all).then((products) => {
-      setState(() => {
-        products.sort((a, b) => a.aisle.compareTo(b.aisle)),
-        _products = products,
-         _progressController = false,
-      }),
-    });
+      this.setState(() {
+        itemsList.sort((a, b) => a.aisle.compareTo(b.aisle));
+        _products = itemsList;
+      });
+    }
+    
+    return "Success!";
   }
 
   @override
@@ -108,11 +111,19 @@ class _PickingPageState extends State<PickingPage> {
                             children: <Widget>[
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 10),
-                                child: Center(child: Text(_products[index].barcode, style: TextStyle(fontSize: 18),),),
+                                child: Center(child: Text(_products[index].productName, style: TextStyle(fontSize: 18),),),
                               ),
                               Row(
-                                 mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  innerCard("Tray", _products[index].orderID.toString()),
+                                  innerCard("Quantity", _products[index].qty.toString())
+                                ],
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   innerCard("Aisle", _products[index].aisle.toString()),
                                   innerCard("Mod", _products[index].mod.toString()),

@@ -201,13 +201,37 @@ void driverLogin() async{
 
 void pickerLogin() async{
     
+setState(() {
+     _isLoading = true;
+  });
+   Map<String, dynamic> body = {'id': pickController.text};
+      var url = 'https://ads.morganchorlton.me/api/picking/get';
+      var response = await http.post(url, body: body);
+      if (response.statusCode == 200) {
+        var pickJson = json.decode(response.body);
+        if(pickJson.toString().contains("No Pick Found")){
+          print("No Pick Found");
+           Alert(
+            context: context,
+            type: AlertType.error,
+            title: "Pick Error",
+            desc: "No Pick Found",
+          ).show();
+        }else{
+          SharedPreferences localStorage = await SharedPreferences.getInstance();
+          localStorage.setString('Pick', json.encode(pickJson));
+          Navigator.push(
+            context,
+            new MaterialPageRoute(
+                builder: (context) => PickingPage()
+                )
+              );
+            }
+          }
 
-  Navigator.push(
-    context,
-    new MaterialPageRoute(
-      builder: (context) => PickingPage()
-    )
-  );
+    setState(() {
+       _isLoading = false;
+    });
 }
 
 }
